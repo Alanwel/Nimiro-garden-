@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nimiro Garden - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-green-50 to-gray-100">
+        <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md mx-4">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-green-600 text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800">Nimiro Garden Admin</h2>
+                <p class="text-gray-600 mt-2">Full Management System</p>
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-semibold mb-2">Admin Password</label>
+                <input type="password" id="adminPass" 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                       placeholder="Enter:myboss"
+                       autocomplete="current-password">
+            </div>
+            
+            <button onclick="login()" 
+                    class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+                <i class="fas fa-lock mr-2"></i>Login to Dashboard
+            </button>
+            
+            <div id="loginError" class="mt-4 p-3 bg-red-50 text-red-700 rounded-lg border border-red-200 hidden">
+                <i class="fas fa-exclamation-circle mr-2"></i>Incorrect password. Use: <strong>admin123</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboard" class="hidden">
+        <!-- Top Navigation -->
+        <nav class="bg-white shadow-sm border-b">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center py-3">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-leaf text-2xl text-green-600"></i>
+                        <div>
+                            <h1 class="text-lg font-bold text-gray-800">Nimiro Garden Admin</h1>
+                            <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                <span id="current-time"></span>
+                                <span id="user-count" class="text-green-600">0 users online</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button onclick="showNotifications()" class="relative p-2 text-gray-600 hover:text-gray-800">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span id="notification-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                        </button>
+                        <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                            <i class="fas fa-sign-out-alt mr-1"></i>Logout
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Tabs Navigation -->
+                <div class="flex space-x-1 border-b">
+                    <button onclick="showTab('dashboard-tab')" class="tab-btn active px-4 py-2 text-sm font-medium text-green-600 border-b-2 border-green-600">
+                        <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                    </button>
+                    <button onclick="showTab('products-tab')" class="tab-btn px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-box mr-2"></i>Products
+                    </button>
+                    <button onclick="showTab('orders-tab')" class="tab-btn px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-shopping-cart mr-2"></i>Orders
+                    </button>
+                    <button onclick="showTab('customers-tab')" class="tab-btn px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-users mr-2"></i>Customers
+                    </button>
+                    <button onclick="showTab('reports-tab')" class="tab-btn px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-chart-bar mr-2"></i>Reports
+                    </button>
+                    <button onclick="showTab('email-tab')" class="tab-btn px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-envelope mr-2"></i>Email
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="container mx-auto px-4 py-6">
+            
+            <!-- Dashboard Tab -->
+            <div id="dashboard-tab" class="tab-content active">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+                                <i class="fas fa-shopping-cart text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Total Orders</p>
+                                <h3 class="text-2xl font-bold" id="total-orders">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+                                <i class="fas fa-money-bill-wave text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Total Revenue</p>
+                                <h3 class="text-2xl font-bold" id="total-revenue">UGX 0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
+                                <i class="fas fa-boxes text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Products</p>
+                                <h3 class="text-2xl font-bold" id="total-products">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
+                                <i class="fas fa-users text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Customers</p>
+                                <h3 class="text-2xl font-bold" id="total-customers">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <h3 class="font-bold text-gray-800 mb-4">Sales Trend</h3>
+                        <canvas id="salesChart" height="200"></canvas>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <h3 class="font-bold text-gray-800 mb-4">Top Products</h3>
+                        <canvas id="productsChart" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-lg shadow p-4">
+                    <h3 class="font-bold text-gray-800 mb-4">Recent Activity</h3>
+                    <div id="activity-feed" class="space-y-3">
+                        <!-- Activity items will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Management Tab -->
+            <div id="products-tab" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-800">Product Management</h2>
+                    <button onclick="showAddProductModal()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+                        <i class="fas fa-plus mr-2"></i>Add New Product
+                    </button>
+                </div>
+
+                <!-- Product Filters -->
+                <div class="bg-white rounded-lg shadow p-4 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <input type="text" id="product-search" placeholder="Search products..." class="px-3 py-2 border rounded-lg">
+                        <select id="category-filter" class="px-3 py-2 border rounded-lg">
+                            <option value="">All Categories</option>
+                            <option value="vegetables">Vegetables</option>
+                            <option value="fruits">Fruits</option>
+                            <option value="herbs">Herbs</option>
+                        </select>
+                        <select id="status-filter" class="px-3 py-2 border rounded-lg">
+                            <option value="">All Status</option>
+                            <option value="in-stock">In Stock</option>
+                            <option value="low-stock">Low Stock</option>
+                            <option value="out-of-stock">Out of Stock</option>
+                        </select>
+                        <button onclick="loadProducts()" class="bg-blue-600 text-white px-4 py-2 rounded-lg">
+                            <i class="fas fa-filter mr-2"></i>Filter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Products Table -->
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stock</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table" class="divide-y divide-gray-200">
+                                <!-- Products will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="no-products" class="text-center py-12">
+                        <i class="fas fa-box-open text-4xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500">No products found</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Management Tab -->
+            <div id="orders-tab" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-800">Order Management</h2>
+                    <div class="flex space-x-2">
+                        <button onclick="exportOrdersCSV()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                            <i class="fas fa-file-export mr-2"></i>Export CSV
+                        </button>
+                        <button onclick="printOrders()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">
+                            <i class="fas fa-print mr-2"></i>Print
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Orders Table -->
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Items</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-table" class="divide-y divide-gray-200">
+                                <!-- Orders will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customers Management Tab -->
+            <div id="customers-tab" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-800">Customer Management</h2>
+                    <button onclick="exportCustomers()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                        <i class="fas fa-file-export mr-2"></i>Export Data
+                    </button>
+                </div>
+
+                <!-- Customers Table -->
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                    <th class="px6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Orders</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Spent</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customers-table" class="divide-y divide-gray-200">
+                                <!-- Customers will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div id="reports-tab" class="tab-content hidden">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Sales Reports</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h3 class="font-bold text-gray-800 mb-2">Date Range</h3>
+                            <div class="flex space-x-2">
+                                <input type="date" id="report-start" class="px-3 py-2 border rounded-lg w-full">
+                                <input type="date" id="report-end" class="px-3 py-2 border rounded-lg w-full">
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h3 class="font-bold text-gray-800 mb-2">Report Type</h3>
+                            <select id="report-type" class="w-full px-3 py-2 border rounded-lg">
+                                <option value="sales">Sales Report</option>
+                                <option value="products">Product Performance</option>
+                                <option value="customers">Customer Analytics</option>
+                            </select>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow flex items-end">
+                            <button onclick="generateReport()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg">
+                                <i class="fas fa-chart-bar mr-2"></i>Generate Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report Results -->
+                <div id="report-results" class="bg-white rounded-lg shadow p-4 hidden">
+                    <div id="report-content"></div>
+                </div>
+            </div>
+
+            <!-- Email Tab -->
+            <div id="email-tab" class="tab-content hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-lg shadow p-4">
+                            <h3 class="font-bold text-gray-800 mb-4">Send Email</h3>
+                            <form id="email-form" class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">To Email *</label>
+                                        <input type="email" id="to-email" required
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Customer Name</label>
+                                        <input type="text" id="to-name"
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Subject *</label>
+                                    <input type="text" id="email-subject" required
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                           value="Message from Nimiro Garden">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Message *</label>
+                                    <textarea id="email-message" required rows="6"
+                                              class="w-full px-3 py-2 border border-gray-300 rounded-lg"></textarea>
+                                </div>
+                                
+                                <div class="flex space-x-2">
+                                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg">
+                                        <i class="fas fa-paper-plane mr-2"></i>Send Email
+                                    </button>
+                                    <button type="button" onclick="saveDraft()" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg">
+                                        <i class="fas fa-save mr-2"></i>Save Draft
+                                    </button>
+                                </div>
+                            </form>
+                            <div id="email-result" class="mt-4 hidden"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Email Templates -->
+                        <div class="bg-white rounded-lg shadow p-4">
+                            <h3 class="font-bold text-gray-800 mb-3">Quick Templates</h3>
+                            <div class="space-y-2">
+                                <button onclick="loadTemplate('order-confirm')" class="w-full text-left px-3 py-2 text-sm border rounded hover:bg-gray-50">
+                                    <i class="fas fa-box mr-2"></i>Order Confirmation
+                                </button>
+                                <button onclick="loadTemplate('delivery')" class="w-full text-left px-3 py-2 text-sm border rounded hover:bg-gray-50">
+                                    <i class="fas fa-truck mr-2"></i>Delivery Update
+                                </button>
+                                <button onclick="loadTemplate('promo')" class="w-full text-left px-3 py-2 text-sm border rounded hover:bg-gray-50">
+                                    <i class="fas fa-tag mr-2"></i>Promotion Offer
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Email Stats -->
+                        <div class="bg-white rounded-lg shadow p-4">
+                            <h3 class="font-bold text-gray-800 mb-3">Email Stats</h3>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span>Sent Today</span>
+                                    <span class="font-bold" id="emails-sent">0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Delivered Rate</span>
+                                    <span class="font-bold" id="delivery-rate">100%</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Open Rate</span>
+                                    <span class="font-bold" id="open-rate">85%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Product Modal -->
+        <div id="add-product-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-lg shadow-lg max-w-lg w-full">
+                <div class="border-b px-6 py-4 flex justify-between items-center">
+                    <h3 class="font-bold text-gray-800">Add New Product</h3>
+                    <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <form id="product-form" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Product Name *</label>
+                                <input type="text" id="product-name" required
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Category *</label>
+                                <select id="product-category" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                    <option value="">Select Category</option>
+                                    <option value="vegetables">Vegetables</option>
+                                    <option value="fruits">Fruits</option>
+                                    <option value="herbs">Herbs</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Price (UGX) *</label>
+                                <input type="number" id="product-price" required min="0" step="100"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Stock Quantity *</label>
+                                <input type="number" id="product-stock" required min="0"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+                                <select id="product-unit" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                    <option value="kg">Kilogram (kg)</option>
+                                    <option value="g">Gram (g)</option>
+                                    <option value="piece">Piece</option>
+                                    <option value="bunch">Bunch</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea id="product-description" rows="3"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg"></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                            <input type="url" id="product-image"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                   placeholder="https://example.com/image.jpg">
+                        </div>
+                        
+                        <div class="flex space-x-2 pt-4">
+                            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg">
+                                <i class="fas fa-save mr-2"></i>Save Product
+                            </button>
+                            <button type="button" onclick="closeModal()" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // ===== CONFIGURATION =====
+        const PASSWORD = "admin123";
+        const SESSION_DURATION = 8 * 60 * 60 * 1000;
+        const EMAILJS_PUBLIC_KEY = "xeAxfDhvjPg6cuuLd";
+        const EMAILJS_SERVICE_ID = "service_d7f9j8i";
+        const EMAILJS_TEMPLATE_ID = "template_xzk1txa";
+
+        // ===== DATABASE (LocalStorage) =====
+        class Database {
+            static init() {
+                if (!localStorage.getItem('nimiro_products')) {
+                    localStorage.setItem('nimiro_products', JSON.stringify([]));
+                }
+                if (!localStorage.getItem('nimiro_orders')) {
+                    localStorage.setItem('nimiro_orders', JSON.stringify([
+                        {
+                            id: 'ORD-001',
+                            customer: 'John Doe',
+                            email: 'john@example.com',
+                            phone: '0701234567',
+                            date: new Date().toISOString(),
+                            items: [
+                                {product: 'Tomatoes', quantity: 2, price: 5000},
+                                {product: 'Onions', quantity: 1, price: 3000}
+                            ],
+                            total: 13000,
+                            status: 'delivered'
+                        }
+                    ]));
+                }
+                if (!localStorage.getItem('nimiro_customers')) {
+                    localStorage.setItem('nimiro_customers', JSON.stringify([
+                        {
+                            id: 1,
+                            name: 'John Doe',
+                            email: 'john@example.com',
+                            phone: '0701234567',
+                            address: 'Kampala',
+                            orders: 3,
+                            totalSpent: 45000
+                        }
+                    ]));
+                }
+                if (!localStorage.getItem('nimiro_emails')) {
+                    localStorage.setItem('nimiro_emails', JSON.stringify([]));
+                }
+            }
+
+            static getProducts() {
+                return JSON.parse(localStorage.getItem('nimiro_products') || '[]');
+            }
+
+            static saveProducts(products) {
+                localStorage.setItem('nimiro_products', JSON.stringify(products));
+            }
+
+            static getOrders() {
+                return JSON.parse(localStorage.getItem('nimiro_orders') || '[]');
+            }
+
+            static saveOrders(orders) {
+                localStorage.setItem('nimiro_orders', JSON.stringify(orders));
+            }
+
+            static getCustomers() {
+                return JSON.parse(localStorage.getItem('nimiro_customers') || '[]');
+            }
+
+            static saveCustomers(customers) {
+                localStorage.setItem('nimiro_customers', JSON.stringify(customers));
+            }
+        }
+
+        // ===== CORE FUNCTIONS =====
+        
+        // 1. Authentication
+        function login() {
+            const password = document.getElementById('adminPass').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            if (password === PASSWORD) {
+                localStorage.setItem('nimiro_session', JSON.stringify({
+                    loggedIn: true,
+                    timestamp: Date.now(),
+                    expires: Date.now() + SESSION_DURATION
+                }));
+                
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                
+                Database.init();
+                initializeDashboard();
+            } else {
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        function checkSession() {
+            const session = JSON.parse(localStorage.getItem('nimiro_session') || '{}');
+            if (session.loggedIn && Date.now() < session.expires) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                Database.init();
+                initializeDashboard();
+                return true;
+            }
+            return false;
+        }
+
+        function logout() {
+            localStorage.removeItem('nimiro_session');
+            location.reload();
+        }
+
+        // 2. Dashboard Initialization
+        function initializeDashboard() {
+            emailjs.init(EMAILJS_PUBLIC_KEY);
+            loadDashboardStats();
+            loadProducts();
+            loadOrders();
+            loadCustomers();
+            setupEmailForm();
+            initializeCharts();
+            updateTime();
+            setInterval(updateTime, 60000);
+        }
+
+        // 3. Tab Navigation
+        function showTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+                tab.classList.add('hidden');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'text-green-600', 'border-green-600');
+                btn.classList.add('text-gray-600');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById(tabId).classList.add('active');
+            
+            // Activate tab button
+            event.target.classList.add('active', 'text-green-600', 'border-green-600');
+            event.target.classList.remove('text-gray-600');
+        }
+
+        // 4. Products Management
+        function loadProducts() {
+            const products = Database.getProducts();
+            const table = document.getElementById('products-table');
+            const noProducts = document.getElementById('no-products');
+            
+            if (products.length === 0) {
+                noProducts.classList.remove('hidden');
+                table.innerHTML = '';
+                return;
+            }
+            
+            noProducts.classList.add('hidden');
+            table.innerHTML = products.map(product => `
+                <tr>
+                    <td class="px-6 py-4">${product.id}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            ${product.image ? `<img src="${product.image}" class="w-10 h-10 rounded mr-3">` : ''}
+                            <span>${product.name}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">${product.category}</td>
+                    <td class="px-6 py-4">UGX ${product.price.toLocaleString()}</td>
+                    <td class="px-6 py-4">${product.stock} ${product.unit}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded ${getStockStatusClass(product.stock)}">
+                            ${getStockStatus(product.stock)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <button onclick="editProduct(${product.id})" class="text-blue-600 hover:text-blue-800 mr-2">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteProduct(${product.id})" class="text-red-600 hover:text-red-800">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function showAddProductModal() {
+            document.getElementById('add-product-modal').classList.remove('hidden');
+            document.getElementById('product-form').reset();
+            document.getElementById('product-form').onsubmit = addProduct;
+        }
+
+        function addProduct(e) {
+            e.preventDefault();
+            
+            const products = Database.getProducts();
+            const newProduct = {
+                id: products.length + 1,
+                name: document.getElementById('product-name').value,
+                category: document.getElementById('product-category').value,
+                price: parseInt(document.getElementById('product-price').value),
+                stock: parseInt(document.getElementById('product-stock').value),
+                unit: document.getElementById('product-unit').value,
+                description: document.getElementById('product-description').value,
+                image: document.getElementById('product-image').value,
+                createdAt: new Date().toISOString()
+            };
+            
+            products.push(newProduct);
+            Database.saveProducts(products);
+            
+            closeModal();
+            loadProducts();
+            loadDashboardStats();
+            showNotification('Product added successfully!', 'success');
+        }
+
+        function editProduct(id) {
+            const products = Database.getProducts();
+            const product = products.find(p => p.id === id);
+            
+            if (product) {
+                showAddProductModal();
+                document.getElementById('product-name').value = product.name;
+                document.getElementById('product-category').value = product.category;
+                document.getElementById('product-price').value = product.price;
+                document.getElementById('product-stock').value = product.stock;
+                document.getElementById('product-unit').value = product.unit;
+                document.getElementById('product-description').value = product.description;
+                document.getElementById('product-image').value = product.image;
+                
+                document.getElementById('product-form').onsubmit = function(e) {
+                    e.preventDefault();
+                    
+                    product.name = document.getElementById('product-name').value;
+                    product.category = document.getElementById('product-category').value;
+                    product.price = parseInt(document.getElementById('product-price').value);
+                    product.stock = parseInt(document.getElementById('product-stock').value);
+                    product.unit = document.getElementById('product-unit').value;
+                    product.description = document.getElementById('product-description').value;
+                    product.image = document.getElementById('product-image').value;
+                    
+                    Database.saveProducts(products);
+                    closeModal();
+                    loadProducts();
+                    showNotification('Product updated successfully!', 'success');
+                };
+            }
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                let products = Database.getProducts();
+                products = products.filter(p => p.id !== id);
+                Database.saveProducts(products);
+                loadProducts();
+                loadDashboardStats();
+                showNotification('Product deleted successfully!', 'success');
+            }
+        }
+
+        function getStockStatus(stock) {
+            if (stock > 20) return 'In Stock';
+            if (stock > 5) return 'Low Stock';
+            return 'Out of Stock';
+        }
+
+        function getStockStatusClass(stock) {
+            if (stock > 20) return 'bg-green-100 text-green-800';
+            if (stock > 5) return 'bg-yellow-100 text-yellow-800';
+            return 'bg-red-100 text-red-800';
+        }
+
+        // 5. Orders Management
+        function loadOrders() {
+            const orders = Database.getOrders();
+            const table = document.getElementById('orders-table');
+            
+            table.innerHTML = orders.map(order => `
+                <tr>
+                    <td class="px-6 py-4">${order.id}</td>
+                    <td class="px-6 py-4">${order.customer}</td>
+                    <td class="px-6 py-4">${new Date(order.date).toLocaleDateString()}</td>
+                    <td class="px-6 py-4">${order.items.length} items</td>
+                    <td class="px-6 py-4">UGX ${order.total.toLocaleString()}</td>
+                    <td class="px-6 py-4">
+                        <select onchange="updateOrderStatus('${order.id}', this.value)" 
+                                class="text-xs px-2 py-1 rounded ${getStatusColor(order.status)}">
+                            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+                            <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Processing</option>
+                            <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+                            <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                        </select>
+                    </td>
+                    <td class="px-6 py-4">
+                        <button onclick="viewOrder('${order.id}')" class="text-blue-600 hover:text-blue-800 mr-2">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button onclick="sendOrderEmail('${order.id}')" class="text-green-600 hover:text-green-800 mr-2">
+                            <i class="fas fa-envelope"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            const orders = Database.getOrders();
+            const order = orders.find(o => o.id === orderId);
+            
+            if (order) {
+                order.status = newStatus;
+                Database.saveOrders(orders);
+                showNotification(`Order ${orderId} updated to ${newStatus}`, 'success');
+            }
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'pending': 'bg-yellow-100 text-yellow-800',
+                'processing': 'bg-blue-100 text-blue-800',
+                'delivered': 'bg-green-100 text-green-800',
+                'cancelled': 'bg-red-100 text-red-800'
+            };
+            return colors[status] || 'bg-gray-100 text-gray-800';
+        }
+
+        function exportOrdersCSV() {
+            const orders = Database.getOrders();
+            let csv = 'Order ID,Customer,Date,Items,Total,Status\n';
+            
+            orders.forEach(order => {
+                csv += `${order.id},${order.customer},${new Date(order.date).toLocaleDateString()},${order.items.length},${order.total},${order.status}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nimiro-orders-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            
+            showNotification('Orders exported to CSV successfully!', 'success');
+        }
+
+        function printOrders() {
+            window.print();
+        }
+
+        // 6. Customers Management
+        function loadCustomers() {
+            const customers = Database.getCustomers();
+            const table = document.getElementById('customers-table');
+            
+            table.innerHTML = customers.map(customer => `
+                <tr>
+                    <td class="px-6 py-4">${customer.id}</td>
+                    <td class="px-6 py-4">${customer.name}</td>
+                    <td class="px-6 py-4">${customer.email}</td>
+                    <td class="px-6 py-4">${customer.phone}</td>
+                    <td class="px-6 py-4">${customer.orders}</td>
+                    <td class="px-6 py-4">UGX ${customer.totalSpent.toLocaleString()}</td>
+                    <td class="px-6 py-4">
+                        <button onclick="viewCustomer(${customer.id})" class="text-blue-600 hover:text-blue-800 mr-2">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button onclick="emailCustomer('${customer.email}', '${customer.name}')" class="text-green-600 hover:text-green-800">
+                            <i class="fas fa-envelope"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function exportCustomers() {
+            const customers = Database.getCustomers();
+            let csv = 'ID,Name,Email,Phone,Orders,Total Spent\n';
+            
+            customers.forEach(customer => {
+                csv += `${customer.id},${customer.name},${customer.email},${customer.phone},${customer.orders},${customer.totalSpent}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nimiro-customers-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            
+            showNotification('Customers exported to CSV successfully!', 'success');
+        }
+
+        // 7. Reports
+        function generateReport() {
+            const type = document.getElementById('report-type').value;
+            const start = document.getElementById('report-start').value;
+            const end = document.getElementById('report-end').value;
+            
+            let reportHTML = `<h3 class="text-lg font-bold mb-4">${type.charAt(0).toUpperCase() + type.slice(1)} Report</h3>`;
+            
+            if (type === 'sales') {
+                const orders = Database.getOrders();
+                const filtered = orders.filter(order => {
+                    const orderDate = new Date(order.date).toISOString().split('T')[0];
+                    return (!start || orderDate >= start) && (!end || orderDate <= end);
+                });
+                
+                const total = filtered.reduce((sum, order) => sum + order.total, 0);
+                const count = filtered.length;
+                
+                reportHTML += `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-gray-50 p-4 rounded">
+                            <p class="text-sm text-gray-600">Total Orders</p>
+                            <p class="text-2xl font-bold">${count}</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded">
+                            <p class="text-sm text-gray-600">Total Revenue</p>
+                            <p class="text-2xl font-bold">UGX ${total.toLocaleString()}</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded">
+                            <p class="text-sm text-gray-600">Average Order</p>
+                            <p class="text-2xl font-bold">UGX ${count > 0 ? Math.round(total/count).toLocaleString() : 0}</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('report-content').innerHTML = reportHTML;
+            document.getElementById('report-results').classList.remove('hidden');
+        }
+
+        // 8. Email System
+        function setupEmailForm() {
+            const form = document.getElementById('email-form');
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
+                submitBtn.disabled = true;
+                
+                try {
+                    await emailjs.send(
+                        EMAILJS_SERVICE_ID,
+                        EMAILJS_TEMPLATE_ID,
+                        {
+                            to_email: document.getElementById('to-email').value,
+                            to_name: document.getElementById('to-name').value,
+                            subject: document.getElementById('email-subject').value,
+                            message: document.getElementById('email-message').value,
+                            from_name: "Nimiro Garden"
+                        }
+                    );
+                    
+                    showEmailResult('✅ Email sent successfully!', 'success');
+                    form.reset();
+                    
+                } catch (error) {
+                    showEmailResult(`❌ Failed to send: ${error.text || 'Check console'}`, 'error');
+                } finally {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+        function showEmailResult(message, type) {
+            const resultDiv = document.getElementById('email-result');
+            resultDiv.textContent = message;
+            resultDiv.className = `p-3 rounded text-sm ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+            resultDiv.classList.remove('hidden');
+            
+            setTimeout(() => {
+                resultDiv.classList.add('hidden');
+            }, 5000);
+        }
+
+        function loadTemplate(type) {
+            const templates = {
+                'order-confirm': {
+                    subject: 'Order Confirmation - Nimiro Garden',
+                    message: 'Thank you for your order! Your fresh vegetables are being prepared and will be delivered within 2 hours.'
+                },
+                'delivery': {
+                    subject: 'Your Nimiro Order is Out for Delivery',
+                    message: 'Great news! Your order is on its way and will arrive shortly.'
+                },
+                'promo': {
+                    subject: 'Special Offer from Nimiro Garden',
+                    message: 'Get 15% off your next order with code: FRESH15'
+                }
+            };
+            
+            if (templates[type]) {
+                document.getElementById('email-subject').value = templates[type].subject;
+                document.getElementById('email-message').value = templates[type].message;
+                showEmailResult('Template loaded!', 'success');
+            }
+        }
+
+        // 9. Dashboard Functions
+        function loadDashboardStats() {
+            const products = Database.getProducts();
+            const orders = Database.getOrders();
+            const customers = Database.getCustomers();
+            
+            document.getElementById('total-orders').textContent = orders.length;
+            document.getElementById('total-revenue').textContent = 'UGX ' + 
+                orders.reduce((sum, order) => sum + order.total, 0).toLocaleString();
+            document.getElementById('total-products').textContent = products.length;
+            document.getElementById('total-customers').textContent = customers.length;
+        }
+
+        function initializeCharts() {
+            // Sales Chart
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+            new Chart(salesCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Sales (UGX)',
+                        data: [120000, 190000, 150000, 250000, 220000, 300000, 280000],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // Products Chart
+            const productsCtx = document.getElementById('productsChart').getContext('2d');
+            new Chart(productsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Vegetables', 'Fruits', 'Herbs', 'Other'],
+                    datasets: [{
+                        data: [40, 30, 20, 10],
+                        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // 10. Utility Functions
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        function closeModal() {
+            document.getElementById('add-product-modal').classList.add('hidden');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 ${
+                type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' : 
+                'bg-red-100 text-red-800 border border-red-200'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Placeholder functions for additional features
+        function showNotifications() { alert('Notifications panel coming soon!'); }
+        function viewOrder(id) { alert(`Viewing order: ${id}\n\nFull order details would show here.`); }
+        function sendOrderEmail(id) { alert(`Sending email for order: ${id}`); }
+        function viewCustomer(id) { alert(`Viewing customer details for ID: ${id}`); }
+        function emailCustomer(email, name) { 
+            document.getElementById('to-email').value = email;
+            document.getElementById('to-name').value = name;
+            showTab('email-tab');
+        }
+        function saveDraft() { showNotification('Email draft saved!', 'success'); }
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkSession()) {
+                document.getElementById('adminPass').focus();
+                document.getElementById('adminPass').addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') login();
+                });
+            }
+            
+            document.getElementById('add-product-modal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+        });
+    </script>
+</body>
+</html>
