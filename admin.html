@@ -219,7 +219,93 @@
             </div>
         </div>
     </div>
+<!-- EmailJS Integration for Nimiro Garden -->
+<div style="background:#f8f9fa; padding:20px; border-radius:8px; max-width:500px; margin:20px 0;">
+    <h3 style="color:#28a745; margin-bottom:20px;">📧 Send Customer Email</h3>
+    
+    <form id="nimiroEmailForm">
+        <div style="margin-bottom:15px;">
+            <input type="email" name="to_email" placeholder="Customer email address" required
+                   style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px;">
+        </div>
+        
+        <div style="margin-bottom:15px;">
+            <input type="text" name="to_name" placeholder="Customer name (optional)"
+                   style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px;">
+        </div>
+        
+        <div style="margin-bottom:15px;">
+            <input type="text" name="subject" placeholder="Email subject" required
+                   style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px;"
+                   value="Message from Nimiro Garden">
+        </div>
+        
+        <div style="margin-bottom:15px;">
+            <textarea name="message" placeholder="Type your message here..." required rows="5"
+                      style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px;"></textarea>
+        </div>
+        
+        <!-- Hidden fields will be sent to EmailJS -->
+        <input type="hidden" name="from_name" value="Nimiro Garden">
+        <input type="hidden" name="website" value="Nimiro Garden - Fresh Vegetables">
+        
+        <button type="submit" 
+                style="background:#28a745; color:white; padding:12px 24px; border:none; border-radius:4px; 
+                       cursor:pointer; font-weight:bold; width:100%;">
+            Send Email Now
+        </button>
+    </form>
+    
+    <div id="emailResult" style="margin-top:15px; font-size:14px;"></div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+    // Initialize with YOUR PUBLIC KEY
+    emailjs.init("8f61QidcJ_QV2CACCK");
+    
+    document.getElementById('nimiroEmailForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const submitBtn = this.querySelector('button');
+        const originalText = submitBtn.textContent;
+        
+        // Show loading state
+        submitBtn.textContent = '⏳ Sending...';
+        submitBtn.disabled = true;
+        submitBtn.style.background = '#6c757d';
+        
+        // Send email using EmailJS
+        emailjs.sendForm(
+            'service_d7f9j8i',  // Your service ID
+            'YOUR_TEMPLATE_ID', // ⚠️ YOU NEED THIS - see step below
+            this
+        )
+        .then(function(response) {
+            document.getElementById('emailResult').innerHTML = 
+                '<div style="color:#155724; background:#d4edda; padding:12px; border-radius:4px; border:1px solid #c3e6cb;">' +
+                '✅ <strong>Email sent successfully!</strong><br>' +
+                'Status: ' + response.status + ' - ' + response.text +
+                '</div>';
+            
+            // Clear the form
+            document.getElementById('nimiroEmailForm').reset();
+        })
+        .catch(function(error) {
+            document.getElementById('emailResult').innerHTML = 
+                '<div style="color:#721c24; background:#f8d7da; padding:12px; border-radius:4px; border:1px solid #f5c6cb;">' +
+                '❌ <strong>Failed to send email</strong><br>' +
+                'Error: ' + (error.text || 'Unknown error. Check if Template ID is set.') +
+                '</div>';
+        })
+        .finally(function() {
+            // Reset button
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+            submitBtn.style.background = '#28a745';
+        });
+    });
+</script>
     <script src="admin.js"></script>
 </body>
 </html>
