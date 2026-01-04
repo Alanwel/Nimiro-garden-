@@ -119,7 +119,17 @@ const products = [
         unit: "kg",
         inStock: true,
         description: "Fresh purple eggplants"
-    }
+    },
+    {
+        id: 10,
+        name: "yellow watermelon",
+        price: 1000,
+        category: "fruit s",
+        image: "https://m.media-amazon.com/images/I/51dzS0eyCIL._AC_US1000_.jpg",
+        unit: "bunch",
+        inStock: true,
+        description: "Fresh watermelon 🍉 nice for juice making "
+    },
 ];
 
 // Get cart from localStorage
