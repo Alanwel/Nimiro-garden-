@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nimiro Garden - Fresh Veggies Delivered</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" type="image/x-icon" href="images/logo.svg">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-green-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-leaf text-xl"></i>
+                <h1 class="text-xl font-bold">Nimiro Garden</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="hover:text-green-200">
+                    <i class="fas fa-home"></i>
+                </a>
+                <a href="products.html" class="hover:text-green-200">
+                    <i class="fas fa-store"></i> Shop
+                </a>
+                <a href="cart.html" class="relative hover:text-green-200">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </a>
+                <a href="admin.html" class="text-sm bg-green-800 px-3 py-1 rounded hover:bg-green-900">
+                    <i class="fas fa-user-shield"></i> Admin
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <section class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-gray-800 mb-4">Fresh Vegetables Delivered to Your Doorstep</h2>
+            <p class="text-gray-600 text-lg mb-6">Straight from Ugandan farms to your kitchen. Order now, get delivery within 2 hours!</p>
+            <a href="products.html" class="bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-green-700 transition">
+                <i class="fas fa-shopping-basket mr-2"></i>Start Shopping
+            </a>
+        </section>
+
+        <!-- Featured Products -->
+        <section class="mb-12">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 border-l-4 border-green-600 pl-3">Today's Fresh Picks</h3>
+            <div id="featured-products" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Products will be loaded by JavaScript -->
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="bg-white rounded-xl shadow-md p-8 mb-12">
+            <h3 class="text-2xl font-bold text-center text-gray-800 mb-8">How Nimiro Garden Works</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="bg-green-100 text-green-600 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-mobile-alt text-2xl"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">1. Browse & Select</h4>
+                    <p class="text-gray-600">Choose fresh vegetables from our farm-to-table selection.</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-green-100 text-green-600 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shopping-cart text-2xl"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">2. Add to Cart</h4>
+                    <p class="text-gray-600">Select quantities and add to your cart.</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-green-100 text-green-600 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-motorcycle text-2xl"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">3. Get Delivery</h4>
+                    <p class="text-gray-600">We deliver fresh veggies to your door in 2 hours or less!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Delivery Areas -->
+        <section class="mb-12">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">We Deliver In:</h3>
+            <div class="flex flex-wrap gap-3">
+                <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full">Mukono</span>
+                <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full">Kampala Central</span>
+                <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full">Kololo</span>
+                <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full">Nakawa</span>
+                <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full">Makindye</span>
+                <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full">Kawempe</span>
+                <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full">Rubaga</span>
+                <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full">seeta</span>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h4 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-leaf mr-2"></i> Nimiro Garden
+                    </h4>
+                    <p class="text-gray-300">Fresh vegetables from Ugandan farms. Delivered same day.</p>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold mb-4">Contact Us</h4>
+                    <p class="text-gray-300 mb-2"><i class="fas fa-phone mr-2"></i> 0755432091</p>
+                    <p class="text-gray-300 mb-2"><i class="fab fa-whatsapp mr-2"></i> WhatsApp: 0755432091</p>
+                    <p class="text-gray-300"><i class="fas fa-envelope mr-2"></i> info@nimirogarden.com</p>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold mb-4">Payment Methods</h4>
+                    <div class="flex space-x-4 text-2xl">
+                        <i class="fas fa-money-bill-wave" title="Cash"></i>
+                        <i class="fas fa-mobile-alt" title="Mobile Money"></i>
+                        <i class="fab fa-cc-visa" title="Visa"></i>
+                    </div>
+                    <p class="text-gray-300 mt-4 text-sm">© 2026 Nimiro Garden. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

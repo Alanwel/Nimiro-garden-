@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Nimiro Garden</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="main.css">
+</head>
+<body class="bg-gray-100">
+    <!-- Admin Header -->
+    <header class="bg-gray-800 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-leaf text-2xl text-green-400"></i>
+                    <div>
+                        <h1 class="text-xl font-bold">Nimiro Garden Admin</h1>
+                        <p class="text-sm text-gray-300">Manage orders, products, and deliveries</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="logout-btn" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Admin Login (Initially shown) -->
+    <div id="login-section" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-lg p-8 max-w-md w-full">
+            <div class="text-center mb-8">
+                <i class="fas fa-user-shield text-5xl text-green-600 mb-4"></i>
+                <h2 class="text-2xl font-bold text-gray-800">Admin Login</h2>
+                <p class="text-gray-600 mt-2">Access the Nimiro Garden dashboard</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 mb-2">Admin ID</label>
+                    <input type="text" id="admin-id" 
+                           class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+                           placeholder="Enter admin ID">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2">Password</label>
+                    <input type="password" id="admin-password" 
+                           class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+                           placeholder="Enter password">
+                </div>
+                
+                <button id="login-btn" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+                    <i class="fas fa-lock mr-2"></i>Login to Dashboard
+                </button>
+                
+                <div class="text-center text-sm text-gray-500 mt-4">
+                    <p>Powered by alanwel </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard (Initially hidden) -->
+    <div id="dashboard-section" class="hidden">
+        <div class="container mx-auto px-4 py-8">
+            <!-- Dashboard Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm">Total Orders</p>
+                            <h3 id="total-orders" class="text-3xl font-bold text-gray-800 mt-2">0</h3>
+                        </div>
+                        <i class="fas fa-shopping-bag text-2xl text-green-600"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm">Revenue Today</p>
+                            <h3 id="revenue-today" class="text-3xl font-bold text-gray-800 mt-2">UGX 0</h3>
+                        </div>
+                        <i class="fas fa-money-bill-wave text-2xl text-green-600"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm">Pending Orders</p>
+                            <h3 id="pending-orders" class="text-3xl font-bold text-gray-800 mt-2">0</h3>
+                        </div>
+                        <i class="fas fa-clock text-2xl text-yellow-600"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm">Completed</p>
+                            <h3 id="completed-orders" class="text-3xl font-bold text-gray-800 mt-2">0</h3>
+                        </div>
+                        <i class="fas fa-check-circle text-2xl text-green-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Orders List -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="border-b px-6 py-4 flex justify-between items-center">
+                            <h3 class="text-lg font-bold text-gray-800">Recent Orders</h3>
+                            <div class="flex space-x-2">
+                                <select id="order-filter" class="border rounded-lg px-3 py-1">
+                                    <option value="all">All Orders</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="delivered">Delivered</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                                <button id="refresh-orders" class="bg-green-600 text-white px-4 py-1 rounded-lg hover:bg-green-700">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                        <th class="px6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orders-table-body" class="divide-y divide-gray-200">
+                                    <!-- Orders will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div id="no-orders" class="text-center py-12">
+                            <i class="fas fa-clipboard-list text-4xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-500">No orders found</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Details Modal -->
+                    <div id="order-details-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                        <div class="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-xl font-bold text-gray-800">Order Details</h3>
+                                <button onclick="closeOrderDetails()" class="text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-times text-2xl"></i>
+                                </button>
+                            </div>
+                            
+                            <div id="order-details-content">
+                                <!-- Order details will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar -->
+                <div class="space-y-6">
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button id="add-product-btn" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">
+                                <i class="fas fa-plus mr-2"></i>Add New Product
+                            </button>
+                            <button id="view-products-btn" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+                                <i class="fas fa-boxes mr-2"></i>Manage Products
+                            </button>
+                            <button id="export-orders-btn" class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition">
+                                <i class="fas fa-file-export mr-2"></i>Export Orders
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Customers -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Recent Customers</h3>
+                        <div id="recent-customers" class="space-y-3">
+                            <!-- Customers will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <!-- System Status -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">System Status</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span>Orders Database</span>
+                                <span class="text-green-600 font-bold">Online</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>Delivery Service</span>
+                                <span class="text-green-600 font-bold">Active</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>Last Backup</span>
+                                <span class="text-gray-600">Today, 02:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

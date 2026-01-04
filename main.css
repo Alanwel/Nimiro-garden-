@@ -1,0 +1,57 @@
+/* Add these to your existing styles/main.css */
+
+/* Modal animations */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fixed.bg-black.bg-opacity-50 {
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+/* Table styles */
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+td, th {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+/* Scrollbar for tables */
+.overflow-y-auto {
+    scrollbar-width: thin;
+    scrollbar-color: #9ca3af #f3f4f6;
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+    background: #f3f4f6;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+    background-color: #9ca3af;
+    border-radius: 3px;
+}
