@@ -9,6 +9,232 @@
     <link rel="stylesheet" href="main.css">
 </head>
 <body class="bg-gray-100">
+    <!-- ===== PASSWORD PROTECTION - ADD THIS FIRST ===== -->
+<div id="loginScreen" style="
+    position: fixed; 
+    top: 0; left: 0; 
+    width: 100%; height: 100%; 
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    z-index: 9999; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    font-family: Arial, sans-serif;
+">
+    <div style="
+        background: white; 
+        padding: 40px; 
+        border-radius: 10px; 
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        text-align: center;
+        width: 90%;
+        max-width: 400px;
+    ">
+        <!-- Nimiro Garden Logo/Header -->
+        <div style="margin-bottom: 25px;">
+            <div style="
+                background: #28a745; 
+                color: white; 
+                width: 60px; 
+                height: 60px; 
+                line-height: 60px; 
+                border-radius: 50%; 
+                margin: 0 auto 15px;
+                font-size: 24px;
+                font-weight: bold;
+            ">
+                NG
+            </div>
+            <h2 style="color: #28a745; margin: 0 0 5px 0;">Nimiro Garden</h2>
+            <p style="color: #666; margin: 0;">Admin Dashboard</p>
+        </div>
+        
+        <!-- Password Form -->
+        <div style="margin-bottom: 20px;">
+            <label style="
+                display: block; 
+                text-align: left; 
+                margin-bottom: 8px; 
+                color: #495057; 
+                font-weight: bold;
+            ">
+                Admin Password
+            </label>
+            <input 
+                type="password" 
+                id="adminPass" 
+                placeholder="Enter your admin password" 
+                style="
+                    width: 100%; 
+                    padding: 12px 15px; 
+                    border: 1px solid #ddd; 
+                    border-radius: 5px; 
+                    font-size: 16px;
+                    box-sizing: border-box;
+                "
+                autocomplete="current-password"
+            >
+        </div>
+        
+        <!-- Login Button -->
+        <button 
+            onclick="verifyAdminAccess()"
+            style="
+                background: #28a745; 
+                color: white; 
+                padding: 12px 30px; 
+                border: none; 
+                border-radius: 5px; 
+                font-size: 16px; 
+                font-weight: bold;
+                cursor: pointer;
+                width: 100%;
+                transition: background 0.3s;
+            "
+            onmouseover="this.style.background='#218838'"
+            onmouseout="this.style.background='#28a745'"
+        >
+            🔐 Login to Admin
+        </button>
+        
+        <!-- Error Message -->
+        <div id="loginError" style="
+            color: #dc3545; 
+            margin-top: 15px; 
+            padding: 10px; 
+            background: #f8d7da; 
+            border-radius: 4px; 
+            border: 1px solid #f5c6cb;
+            display: none;
+        ">
+            ❌ Incorrect password. Please try again.
+        </div>
+        
+        <!-- Hint -->
+        <p style="color: #6c757d; font-size: 12px; margin-top: 20px;">
+            Contact system administrator if you forgot the password
+        </p>
+    </div>
+</div>
+
+<script>
+// ===== CONFIGURATION =====
+// ⚠️ CHANGE THIS PASSWORD TO SOMETHING SECURE! ⚠️
+const CORRECT_PASSWORD = "NimiroSecure123!"; // Example: Change this!
+
+// ===== LOGIN FUNCTION =====
+function verifyAdminAccess() {
+    const enteredPassword = document.getElementById('adminPass').value;
+    const errorDiv = document.getElementById('loginError');
+    
+    // Clear previous error
+    errorDiv.style.display = 'none';
+    
+    // Check password
+    if (enteredPassword === CORRECT_PASSWORD) {
+        // SUCCESS: Hide login screen
+        document.getElementById('loginScreen').style.display = 'none';
+        
+        // Store login timestamp (valid for 8 hours)
+        const loginData = {
+            timestamp: Date.now(),
+            validUntil: Date.now() + (8 * 60 * 60 * 1000) // 8 hours
+        };
+        localStorage.setItem('nimiroAdminAuth', JSON.stringify(loginData));
+        
+        // Show success message briefly
+        showMessage("✅ Login successful!", "success");
+    } else {
+        // FAIL: Show error
+        errorDiv.style.display = 'block';
+        document.getElementById('adminPass').value = '';
+        document.getElementById('adminPass').focus();
+        
+        // Optional: Log failed attempt (console only)
+        console.warn('Failed admin login attempt at ' + new Date().toLocaleString());
+    }
+}
+
+// ===== CHECK EXISTING LOGIN =====
+function checkExistingLogin() {
+    const savedLogin = localStorage.getItem('nimiroAdminAuth');
+    
+    if (savedLogin) {
+        try {
+            const loginData = JSON.parse(savedLogin);
+            
+            // Check if login is still valid (not expired)
+            if (Date.now() < loginData.validUntil) {
+                // Valid login found - hide login screen
+                document.getElementById('loginScreen').style.display = 'none';
+                return true;
+            } else {
+                // Login expired - remove it
+                localStorage.removeItem('nimiroAdminAuth');
+            }
+        } catch (e) {
+            // Invalid data - remove it
+            localStorage.removeItem('nimiroAdminAuth');
+        }
+    }
+    return false;
+}
+
+// ===== ENTER KEY SUPPORT =====
+document.getElementById('adminPass').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        verifyAdminAccess();
+    }
+});
+
+// ===== HELPER FUNCTION =====
+function showMessage(text, type) {
+    const msg = document.createElement('div');
+    msg.textContent = text;
+    msg.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        background: ${type === 'success' ? '#28a745' : '#dc3545'};
+        color: white;
+        border-radius: 5px;
+        z-index: 10000;
+        animation: fadeInOut 3s ease-in-out;
+    `;
+    document.body.appendChild(msg);
+    setTimeout(() => msg.remove(), 3000);
+}
+
+// ===== ON PAGE LOAD =====
+window.addEventListener('DOMContentLoaded', function() {
+    // Check for existing valid login
+    if (!checkExistingLogin()) {
+        // No valid login - ensure login screen is visible
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('adminPass').focus();
+    }
+    
+    // Add CSS animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-10px); }
+            15% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); }
+        }
+    `;
+    document.head.appendChild(style);
+});
+
+// ===== LOGOUT FUNCTION (Optional) =====
+function adminLogout() {
+    localStorage.removeItem('nimiroAdminAuth');
+    location.reload(); // Reload page to show login screen
+}
+</script>
+<!-- ===== END PASSWORD PROTECTION ===== -->
     <!-- Admin Header -->
     <header class="bg-gray-800 text-white shadow-lg">
         <div class="container mx-auto px-4 py-4">
